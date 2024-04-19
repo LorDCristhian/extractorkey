@@ -24,7 +24,7 @@ print(f"{Fore.RED}{Style.BRIGHT}{banner}{Style.RESET_ALL}")
 print(f"{Fore.CYAN}{Style.BRIGHT}================= BUSQUEDAS DE COINCIDENCIAS ================={Style.RESET_ALL}")
 
 # Nombre del archivo que contiene las líneas
-archivo = "checarlola2.txt"
+archivo = "checar.txt"
 
 # Verificar si el archivo existe
 try:
@@ -39,7 +39,7 @@ resultados = []
 
 # Diccionario de patrones a buscar
 patrones_busqueda = {
-    "Extracted-token": r"(?i)(([a-z0-9]+)[-|_])?(key|password|passwd|pass|pwd|private|credential|auth|cred|creds|secret|access|token|secretaccesskey)([-|_][a-z]+)?(\\s)*(:|=)+",
+    #"Extracted-token": r"(?i)(([a-z0-9]+)[-|_])?(key|password|passwd|pass|pwd|private|credential|auth|cred|creds|secret|access|token|secretaccesskey)([-|_][a-z]+)?(\\s)*(:|=)+",
     "Conexion_aks": r"DefaultEndpointsProtocol=https;AccountName=[^;]+;AccountKey=[^;]+;EndpointSuffix=core\.windows\.net",
     "Token_JWT": r"eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*",
     "Google-api-key": r"(?i)AIza[0-9A-Za-z\-_]{35}",
@@ -65,15 +65,12 @@ def procesar_url(url):
     except requests.exceptions.RequestException as e:
         print(f"{Fore.RED}{Style.BRIGHT}[x] Error al procesar URL: {Style.RESET_ALL}{url}")
 
-# Usar ThreadPoolExecutor para procesar las URL concurrentemente
+# Usar ThreadPoolExecutor para procesar las URL en paralelo
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    futures = {executor.submit(procesar_url, url): url for url in urls}
-
-    for future in concurrent.futures.as_completed(futures):
-        future.result()
+    executor.map(procesar_url, urls)
 
 # Banner FIN PROCESO
-    print(f"{Fore.CYAN}{Style.BRIGHT}================= PATRONES BUSCADOS ================={Style.RESET_ALL}")
+print(f"{Fore.CYAN}{Style.BRIGHT}================= PATRONES BUSCADOS ================={Style.RESET_ALL}")
 
 # Imprimir los valores buscados
 for clave, valor in patrones_busqueda.items():
