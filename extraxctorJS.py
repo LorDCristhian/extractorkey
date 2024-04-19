@@ -15,8 +15,9 @@ def procesar_linea(linea):
         rutas = []
         for script_tag in soup.find_all('script', src=True):
             src = script_tag['src']
-            ruta_absoluta = urljoin(url, src)
-            rutas.append(ruta_absoluta)
+            if src.lower().endswith(('.js')):
+                ruta_absoluta = urljoin(url, src)
+                rutas.append(ruta_absoluta)
 
         # Imprimir las rutas y almacenarlas en el archivo "checar.txt"
         with open("checar.txt", "a") as archivo_checar:
